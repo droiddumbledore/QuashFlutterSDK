@@ -16,15 +16,16 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
   String _platformVersion = 'Unknown';
   final _quashFlutterSdkPlugin = QuashFlutterSdk();
   bool visible = false;
+  ScreenShotOnShake screenShotOnShake = ScreenShotOnShake();
 
   @override
   void initState() {
     super.initState();
     initPlatformState();
+    screenShotOnShake.initialize();
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
@@ -33,8 +34,8 @@ class _MyAppState extends State<MyApp> {
     // Platform messages may fail, so we use a try/catch PlatformException.
     // We also handle the message potentially returning null.
     try {
-      platformVersion =
-          await _quashFlutterSdkPlugin.getPlatformVersion() ?? 'Unknown platform version';
+      platformVersion = await _quashFlutterSdkPlugin.getPlatformVersion() ??
+          'Unknown platform version';
     } on PlatformException {
       platformVersion = 'Failed to get platform version.';
     }
@@ -56,38 +57,46 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text('Plugin example app'),
         ),
-        body: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text('Running on: $_platformVersion\n'),
-              const SizedBox(height: 10,),
-              OutlinedButton(onPressed: () {
-                setState(() {
-                  visible = true;
-                });
-              }, child: const Text('Take Screenshot')),
-              const SizedBox(height: 10,),
-              visible ? FutureBuilder<Uint8List>(
-                  future: _quashFlutterSdkPlugin.getScreenShot(),
-                  builder: (BuildContext context, AsyncSnapshot<Uint8List> snapshot) {
-                    if (snapshot.hasData) {
-                      print(snapshot.data);
-                      final Uint8List = snapshot.data!;
-                      // Convert the byte array to an image and display it
-                      return Image.memory(Uint8List);
-                    } else if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
-                    } else {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                  }
-              ) : Container()
-            ],
-          ),
+        body: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('Running on: $_platformVersion\n'),
+            const Text('Shake the device first'),
+            const Text('then tap on view screenshot to see the screenshot'),
+            const SizedBox(
+              height: 10,
+            ),
+            OutlinedButton(
+                onPressed: () {
+                  setState(() {
+                    visible = true;
+                  });
+                },
+                child: const Text('View Screenshot')),
+            const SizedBox(
+              height: 10,
+            ),
+            visible
+                ? screenShotOnShake.screenShot.isNotEmpty
+                ? Center(
+                child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(),
+                    ),
+                    child: Image.memory(
+                      screenShotOnShake.screenShot,
+                      height: MediaQuery.of(context).size.height * 0.5,
+                    )))
+                : const Center(
+              child: Text('Device was not shaken'),
+            )
+                : Container()
+          ],
         ),
       ),
     );
   }
 }
+
+

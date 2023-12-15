@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:quash_flutter_sdk/quash_flutter_sdk.dart';
 import 'package:quash_flutter_sdk/quash_flutter_sdk_platform_interface.dart';
@@ -12,7 +14,7 @@ class MockQuashFlutterSdkPlatform
   Future<String?> getPlatformVersion() => Future.value('42');
 
   @override
-  Future<String?> getScreenShot() {
+  Future<Uint8List> getScreenShot() {
     // TODO: implement getScreenShot
     throw UnimplementedError();
   }

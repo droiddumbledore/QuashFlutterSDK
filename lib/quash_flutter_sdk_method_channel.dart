@@ -16,8 +16,8 @@ class MethodChannelQuashFlutterSdk extends QuashFlutterSdkPlatform {
   }
 
   @override
-  Future<String?> getScreenShot() async{
-    final screenShot = await methodChannel.invokeMethod<String>('getScreenShot');
-    return screenShot;
+  Future<Uint8List> getScreenShot() async{
+    final screenShot = await methodChannel.invokeMethod<Uint8List>('getScreenShot');
+    return screenShot!!;
   }
 }

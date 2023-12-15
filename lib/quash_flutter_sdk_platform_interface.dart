@@ -1,3 +1,6 @@
+import 'dart:ffi';
+import 'dart:typed_data';
+
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import 'quash_flutter_sdk_method_channel.dart';
@@ -27,7 +30,7 @@ abstract class QuashFlutterSdkPlatform extends PlatformInterface {
     throw UnimplementedError('platformVersion() has not been implemented.');
   }
 
-  Future<String?> getScreenShot(){
+  Future<Uint8List> getScreenShot(){
     throw UnimplementedError('getScreenShot() has not been implemented');
   }
 }

@@ -56,31 +56,36 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text('Plugin example app'),
         ),
-        body: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('Running on: $_platformVersion\n'),
-            const SizedBox(height: 10,),
-            OutlinedButton(onPressed: () {
-              setState(() {
-                visible = true;
-              });
-            }, child: const Text('Take Screenshot')),
-            const SizedBox(height: 10,),
-            visible ? FutureBuilder(
-                future: _quashFlutterSdkPlugin.getScreenShot(),
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  if (snapshot.hasData) {
-                    print('Screenshot le liya hai bhai!');
-                    return const Center(child: Text('ScreenShot captured successfully!'));
-                  } else if (snapshot.hasError) {
-                    return Center(child: Text(snapshot.error.toString()));
-                  } else {
-                    return const Center(child: CircularProgressIndicator());
+        body: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Running on: $_platformVersion\n'),
+              const SizedBox(height: 10,),
+              OutlinedButton(onPressed: () {
+                setState(() {
+                  visible = true;
+                });
+              }, child: const Text('Take Screenshot')),
+              const SizedBox(height: 10,),
+              visible ? FutureBuilder<Uint8List>(
+                  future: _quashFlutterSdkPlugin.getScreenShot(),
+                  builder: (BuildContext context, AsyncSnapshot<Uint8List> snapshot) {
+                    if (snapshot.hasData) {
+                      print(snapshot.data);
+                      final Uint8List = snapshot.data!;
+                      // Convert the byte array to an image and display it
+                      return Image.memory(Uint8List);
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else {
+                      return const Center(child: CircularProgressIndicator());
+                    }
                   }
-                }) : Container()
-          ],
+              ) : Container()
+            ],
+          ),
         ),
       ),
     );

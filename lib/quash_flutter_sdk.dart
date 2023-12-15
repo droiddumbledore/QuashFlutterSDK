@@ -1,4 +1,6 @@
 
+import 'dart:typed_data';
+
 import 'quash_flutter_sdk_platform_interface.dart';
 
 class QuashFlutterSdk {
@@ -7,7 +9,7 @@ class QuashFlutterSdk {
     return QuashFlutterSdkPlatform.instance.getPlatformVersion();
   }
 
-  Future<String?> getScreenShot() {
+  Future<Uint8List> getScreenShot() {
     return QuashFlutterSdkPlatform.instance.getScreenShot();
   }
 }
